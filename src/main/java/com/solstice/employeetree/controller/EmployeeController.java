@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -35,10 +36,16 @@ public class EmployeeController {
     })
     @GetMapping("/{id}")
     public HttpEntity<Employee> getEmployee(@PathVariable("id") Long id) {
-        Employee employee = EmployeePresenter.toModel(employeeService.getEmployee(id));
-        employee.add(linkTo(methodOn(EmployeeController.class).getEmployee(id)).withSelfRel());
 
-        return new ResponseEntity<>(employee, HttpStatus.OK);
+        Optional<Employee> employee = employeeService.getEmployee(id);
+
+        if (employee.isPresent()) {
+            employee.get().add(linkTo(methodOn(EmployeeController.class).getEmployee(id)).withSelfRel());
+
+            return new ResponseEntity<>(employee.get(), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }

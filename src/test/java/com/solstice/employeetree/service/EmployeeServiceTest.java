@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -29,9 +31,21 @@ public class EmployeeServiceTest {
 
         when(employeeRepository.getById(123L)).thenReturn(expectedEmployee);
 
-        Employee employee  = employeeService.getEmployee(123L);
+        Optional<com.solstice.employeetree.view.Employee> employee  = employeeService.getEmployee(123L);
 
-        Assert.assertThat(employee.getId(), Matchers.is(123L));
+        Assert.assertThat(employee.isPresent(), Matchers.is(true));
+        Assert.assertThat(employee.get().getEmployeeId(), Matchers.is(123L));
+
+    }
+
+    @Test
+    public void testGetEmployeeNotFound() {
+
+        when(employeeRepository.getById(123L)).thenReturn(null);
+
+        Optional<com.solstice.employeetree.view.Employee> employee  = employeeService.getEmployee(123L);
+
+        Assert.assertThat(employee.isPresent(), Matchers.is(false));
 
     }
 

@@ -1,7 +1,11 @@
 package com.solstice.employeetree.view;
 
+import javax.validation.constraints.NotNull;
+
 public class EmployeePresenter {
-    public static Employee toModel(com.solstice.employeetree.domain.Employee domain) {
+
+    public static Employee toModel(@NotNull com.solstice.employeetree.domain.Employee domain) {
+
         Employee model = new Employee();
         model.setEmployeeId(domain.getId());
         model.setEmail(domain.getEmail());
@@ -14,5 +18,6 @@ public class EmployeePresenter {
 
         return model;
     }
+
 }
 
