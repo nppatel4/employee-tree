@@ -11,13 +11,36 @@ buildscript {
 }
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 group = 'com.solstice'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
+
+sourceSets {
+    intTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    intTestImplementation.extendsFrom implementation
+    intTestImplementation.extendsFrom testImplementation
+    intTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+task integrationTest(type: Test) {
+    description = "Runs integration tests."
+    group = 'verification'
+    testClassesDir = sourceSets.intTest.output.classesDir
+    classpath += sourceSets.intTest.runtimeClasspath
+    shouldRunAfter test
+}
+
+check.dependsOn integrationTest
 
 repositories {
     mavenCentral()
