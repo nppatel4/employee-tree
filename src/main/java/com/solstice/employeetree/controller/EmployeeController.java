@@ -1,8 +1,8 @@
 package com.solstice.employeetree.controller;
 
+import com.solstice.employeetree.exception.NotFoundException;
 import com.solstice.employeetree.service.EmployeeService;
 import com.solstice.employeetree.view.Employee;
-import com.solstice.employeetree.view.EmployeePresenter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -35,7 +34,7 @@ public class EmployeeController {
             @ApiResponse(code = 404, message = "Employee not found.")
     })
     @GetMapping("/{id}")
-    public HttpEntity<Employee> getEmployee(@PathVariable("id") Long id) {
+    public HttpEntity<Employee> getEmployee(@PathVariable("id") Long id) throws NotFoundException {
 
         Optional<Employee> employee = employeeService.getEmployee(id);
 
@@ -45,7 +44,7 @@ public class EmployeeController {
             return new ResponseEntity<>(employee.get(), HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new NotFoundException("The employee was not found.");
     }
 
 }
